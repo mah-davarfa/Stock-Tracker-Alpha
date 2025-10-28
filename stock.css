@@ -1,0 +1,287 @@
+/* ------------------------------
+   Base / Reset
+------------------------------ */
+*,
+*::before,
+*::after { box-sizing: border-box; }
+
+:root{
+ 
+  --bg: #f7f7fa;
+  --panel: #ffffff;
+  --text: #1c1d22;
+  --muted: #313233;
+  --brand: #6b4bff;
+  --brand-contrast: #fff;
+  --line: #e6e7eb;
+
+  /* Shadows / radius / speed */
+  --radius: 12px;
+  --shadow: 0 10px 30px rgba(20,20,40,.08);
+  --speed: 160ms;
+}
+
+html, body { height: 100%; }
+body{
+  margin: 0;
+  font: 15px/1.55 system-ui,-apple-system,Segoe UI,Inter,Roboto,Helvetica,Arial,sans-serif;
+  color: var(--text);
+  background: var(--bg);
+}
+
+
+main { max-width: 1100px; margin: 0 auto; padding: 1.25rem; }
+section { margin-block: 1.25rem; }
+#apikey-status , #app-status ,#app-error{color: red; font-size: x-large;  transition: text-shadow 2s;
+  text-shadow: 0 0 4px #6b4bff;
+ }
+
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0;}
+.sr-only-focusable:focus{position:static;width:auto;height:auto;margin:0;overflow:visible;clip:auto;white-space:normal;}
+a:focus-visible {
+  outline: 2px solid var(--brand);
+  outline-offset: 2px;
+}
+
+
+/*
+   Header
+ */
+header{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem 1.25rem;
+  background: #9a8e8ed8; 
+  color: #111;
+}
+header h1{
+  margin: 0;
+  font-size: clamp(1.1rem, 2.2vw, 1.5rem);
+  display: inline-flex;
+  gap: .5rem;
+  align-items: center;
+}
+.kpis{
+  display: flex;
+  gap: 1.25rem;
+  margin: 0;
+}
+.kpis > div { display: flex; gap: .35rem; align-items: baseline; }
+.kpis dt{ font-weight: 600; }
+.kpis dd{ margin: 0; }
+
+/* 
+   Forms / Inputs / Buttons
+ */
+label{ display: inline-flex; gap: .5rem; align-items: center; }
+
+input[type="text"],
+input[type="number"],
+input[type="password"]{
+  min-width: 12ch;
+  padding: .55rem .7rem;
+  border: 1px solid var(--line);
+  border-radius: .55rem;
+  background: #fff;
+  color: var(--text);
+  box-shadow: 0 1px 0 rgba(0,0,0,.02);
+}
+
+input[type="text"]::placeholder { color: #9a9daa; }
+
+input:focus-visible{
+  outline: 2px solid var(--brand);
+  outline-offset: 2px;
+}
+
+/* Buttons: strip UA styles and define ours */
+button{
+ 
+  background: #efeff3;
+  border: 1px solid var(--line);
+  color: var(--text);
+  padding: .55rem .9rem;
+  border-radius: .6rem;
+  font: inherit;
+  line-height: 1;
+  cursor: pointer;
+  transition: transform var(--speed) ease, box-shadow var(--speed) ease, background-color var(--speed) ease;
+}
+button:hover { background: #e0e0e5; }          /* no surprise hover */
+button:active { transform: translateY(1px); }
+button:focus-visible{ outline: 2px solid var(--brand); outline-offset: 2px; }
+#btn-logout{
+ color: red;
+ border:2px solid red;
+ background-color: yellowgreen;
+}
+
+button.is-primary{
+  background: var(--brand);
+  color: var(--brand-contrast);
+  border-color: var(--brand);
+}
+button.is-primary:hover{ background: var(--brand); }
+
+/* Quick-search buttons row */
+.quick-search{
+  display: flex; align-items: center; flex-wrap: wrap;
+  gap: .6rem 1rem;
+  margin-top: .5rem;
+}
+.quick-search p{ margin: 0; color: var(--muted); }
+
+/* Search form stack */
+.search-stock form{
+  display: grid;
+  gap: 1rem;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 1rem;
+}
+#search-form > div:first-child{
+  display: flex;
+  flex-wrap: wrap;
+  gap: .6rem;
+}
+
+/* 
+   Result / Info Card
+ */
+#appear-after-search[hidden]{ display: none !important; }
+
+#searchResultToShow{
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 1rem;
+}
+
+/* Two columns that wrap on small screens */
+.search-result-info{
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem 2rem;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+.add-to-watchlist{
+  min-width: 240px;
+  display: grid;
+  gap: .5rem;
+}
+.add-to-watchlist p{ margin: 0; }
+
+.detail-search-info{
+  display: grid;
+  grid-template-columns: repeat(2, minmax(180px, 1fr));
+  gap: 1rem 2rem;
+}
+#realTime-price p,
+.detail-search-info > div p{
+  margin: .2rem 0;
+  color: var(--text);
+}
+#sr-name, #sr-price{ font-weight: 600; }
+
+/* Portfolio management block */
+.manage-portfolio{
+  text-align: center;
+  margin: .5rem 0 1rem;
+}
+.buy-sell{
+  display: flex;
+  flex-wrap: wrap;
+  gap: .7rem 1rem;
+  align-items: center;
+  justify-content: center;
+  background: #fafbff;
+  border: 1px dashed var(--line);
+  border-radius: var(--radius);
+  padding: .8rem;
+}
+#btn-update-shares{ margin-left: .25rem; }
+.holding{
+  display: flex;
+  flex-wrap: wrap;
+  gap: .7rem 1.25rem;
+  align-items: center;
+  justify-content: center;
+  padding: .8rem;
+}
+
+/*
+   Tables (Watchlist / Portfolio)
+ */
+table{
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 520px; /* ensures horizontal scroll on small screens */
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  overflow: hidden; /* keeps rounded corners */
+}
+thead{ background: #f0f1f5; }
+th, td{
+  padding: .6rem .75rem;
+  border-bottom: 1px solid var(--line);
+  text-align: left;
+}
+td:nth-child(2),
+td:nth-child(3),
+td:nth-child(5),
+td:nth-child(4){ 
+  text-align: right;
+}
+tbody tr:last-child td{ border-bottom: 0; }
+.table-wrapper{
+  width: 100%;
+  overflow-x: auto;          /* enables swipe left/right on small screens */
+  -webkit-overflow-scrolling: touch;
+}
+.watchlist { margin-top: .5rem; }
+#watchlist-rows button,
+#portfolio-rows button { white-space: nowrap; }
+
+
+
+/* 
+   Footer
+ */
+footer{
+  margin-top: 1.25rem;
+  padding: 1rem 1.25rem;
+  text-align: center;
+  background: #9a8e8ed8;
+}
+footer p{ margin: 0.2rem 0; }
+
+/* 
+   Utilities
+ */
+.center { text-align: center; }
+.muted { color: var(--muted); }
+.hidden { display: none !important; }
+
+/*
+   Responsive
+ */
+@media (max-width: 900px){
+  .kpis{ flex-wrap: wrap; }
+  .detail-search-info{ grid-template-columns: 1fr; }
+}
+
+@media (max-width: 640px){
+  header{ flex-direction: column; align-items: flex-start; }
+  #search-form > div:first-child{ flex-direction: column; align-items: stretch; }
+  .quick-search{ gap: .5rem .6rem; }
+  th, td{ padding: .55rem .6rem; }
+}

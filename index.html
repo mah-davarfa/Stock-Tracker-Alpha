@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Search stocks via Alpha Vantage, build a watchlist, and track your demo portfolio in the browser.">
+    <title>Stock Tracker — Alpha Vantage Demo</title>
+    <link rel="stylesheet" href="./stock.css">
+    
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <script defer src="./stock.js"></script>
+</head>
+<body>
+  <header>
+    <h1>
+      <i class="fas fa-chart-line" aria-hidden="true"></i>
+      Stock Tracker API
+    </h1>
+
+    <!-- KPIs as a definition list -->
+    <dl class="kpis" aria-label="Portfolio summary">
+      <div>
+        <dt>Portfolio value:</dt>
+        <dd id="kpi-portfolio-value" aria-live="polite">$0.00</dd>
+      </div>
+      <div>
+        <dt>Stocks owned:</dt>
+        <dd id="kpi-stocks-owned" aria-live="polite">0</dd>
+      </div>
+    </dl>
+  </header>
+  
+  <main id="main">
+    <section class="api-key" aria-labelledby="api-setup">
+        <h2 id="api-setup" >use your Alpha Vantage ApiKey, your Key will not be saved, the key will be use only for this session.</h2>
+      <p class="muted" id="api-help">
+        Don’t have a key?
+        <a href="https://www.alphavantage.co/support/#api-key" target="_blank" rel="noopener noreferrer">
+          Get a free Alpha Vantage key by using your Email
+        </a>.
+        Read their documentation for rate limits and terms.
+      </p>
+        <form id="apikey-form"novalidate aria-describedby="api-help">
+          <div>
+            <label for="apikey">Alpha Vantage API Key</label>
+            <input id="apikey"
+              name="apikey"
+              type="password"
+              placeholder="Paste your API key"
+              required
+              autocomplete="off"
+              autocapitalize="off"
+              spellcheck="false"
+              inputmode="text"
+            />
+            <button class="is-primary" type="submit">set API Key</button>
+            <button id="btn-logout" type="button" aria-label="Log out">Log out</button>
+          </div>
+          <p id="apikey-status" class="muted"  aria-live="polite"></p>
+          <p id="app-status" class="muted" role="status" aria-live="polite"></p>
+          <p id="app-error" class="muted" role="alert" aria-live="assertive"></p>
+        </form>
+    </section>
+    
+    <section class="search-stock" aria-labelledby="search-for-stock">
+      <h2 id="search-for-stock">Search Stocks</h2>
+      <form id="search-form" method="get" novalidate>
+        <div>
+          <label for="search">Symbol or company</label>
+          <input id="search" name="q" autocomplete="off" type="text" placeholder="AAPL, NVDA, TSLA…" aria-label="Search for a stock" required />
+          <button class="is-primary" type="submit">Search</button>
+        </div>
+
+        <div class="quick-search" aria-label="Quick search">
+          <p>Quick Search:</p>
+          <button type="button" data-symbol="TSLA">TESLA</button>
+          <button type="button" data-symbol="NVDA">NVIDIA</button>
+          <button type="button" data-symbol="AAPL">APPLE</button>
+        </div>
+      </form>
+    </section>
+
+    <!-- Appears after we have data -->
+    <section id="appear-after-search" aria-labelledby="stock-searched-information" hidden> 
+      <h2 id="stock-searched-information">Selected Stock</h2>
+
+      <div id="searchResultToShow">
+        <div class="search-result-info">
+          <div class="add-to-watchlist">
+            <p>Name: <span id="sr-name">—</span></p>
+            <button class="is-primary" type="button" id="btn-add-watchlist">Add to Watchlist</button>
+          </div>
+
+          <div class="detail-search-info">
+            <div id="realTime-price">
+              <p>Time: <span id="sr-time">—</span></p>
+              <p>Open: <span id="sr-open">—</span></p>
+              <p>Close: <span id="sr-close">—</span></p>
+              <p>High: <span id="sr-high">—</span></p>
+              <p>Low: <span id="sr-low">—</span></p>
+            </div>
+            <div>
+              <p>Price: <span id="sr-price">—</span></p>
+              <p>Difference: <span id="sr-diff">—</span></p>
+              <p>Difference : <span id="sr-diffp">—</span></p>
+              <p>Volume: <span id="sr-volume">—</span></p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    
+    <section id="manage-portfolio" aria-labelledby="manage-portfolio-heading">
+       <h2 id="manage-portfolio-heading" class="manage-portfolio">Portfolio Management</h2>
+        <div class="buy-sell">
+          <label>Number of shares to buy
+            <input id="buy-count" type="number" step="1" min="0" value="0" inputmode="numeric">
+          </label>
+          <label>Number of shares to sell
+            <input id="sell-count" type="number" step="1" min="0" value="0" inputmode="numeric">
+          </label>
+          <button class="is-primary" type="button" id="btn-update-shares">Update Stock</button>
+          <!--delete buton-->
+        </div>
+
+        <div class="holding" aria-labelledby="current-stock-information">
+          <h3>Current Holding <span id="current-stock-information" aria-live="polite">0</span></h3>
+          <p>Position Value: $<span id="position-value" aria-live="polite">0.00</span></p>
+        </div>
+      </section>
+
+    <!-- Watchlist table  -->
+    <section aria-labelledby="watch-list">
+      <h2 id="watch-list">Watchlist</h2>
+      <p class="sr-only" id="watchlist-scroll-hint">Table is horizontally scrollable on small screens.</p>
+      <div class="table-wrapper" aria-describedby="watchlist-scroll-hint">
+        <table class="watchlist">
+        <caption class="sr-only">Watchlist</caption>
+        <thead>
+          <tr>
+            <th scope="col">Stock</th><th scope="col">Price</th><th scope="col">Difference</th><th scope="col">Shares</th><th scope="col">Total</th><th scope="col">Action</th>
+          </tr>
+        </thead>
+        <tbody id="watchlist-rows"></tbody>
+      </table>
+
+      </div>
+    </section>
+
+    <!-- Portfolio table  -->
+    <section class="portfolio" aria-labelledby="portfolio-all-stocks-information">
+      <h2 id="portfolio-all-stocks-information">Portfolio Stocks</h2>
+      <p class="sr-only" id="portfolio-scroll-hint">Table is horizontally scrollable on small screens.</p>
+      <div class="table-wrapper" aria-describedby="portfolio-scroll-hint">
+       <table>
+        <caption class="sr-only">Portfolio</caption>
+        <thead>
+          <tr>
+            <th>Stock</th><th>Price</th><th>Change</th><th>Shares</th><th>Total Value</th><th scope="col">Action</th>
+          </tr>
+        </thead>
+       <tbody id="portfolio-rows"></tbody>
+      </table>
+      </div>
+
+    </section>
+  </main>
+
+  <footer>
+    <p>Developed by Mahmoud — Stock Tracker uses Alpha Vantage , HTML, CSS, JS</p>
+    <p>&copy; 2025 Stock Tracker</p>
+  </footer>
+
+  
+</body>
